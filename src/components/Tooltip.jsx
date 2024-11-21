@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
-import styled, { keyframes, css } from 'styled-components'
+import React, { useState, useRef, useEffect } from 'react'
+import styled, { css } from 'styled-components'
+import { fadeIn, scaleUp } from '../utilities/Animation'
+import { getPlaceTooltip } from '../utilities/Styles'
 
 const Tooltip = ({
     children,
@@ -10,6 +12,10 @@ const Tooltip = ({
     animation = "fade"
 }) => {
     const [visible, setVisible] = useState(false)
+    const [finalPlacement, setFinalPlacement] = useState(placement)
+
+    const tooltipRef = useRef(null)
+    const targetRef = useRef(null)
 
     let timer
 
@@ -22,16 +28,56 @@ const Tooltip = ({
         setVisible(false)
     }
 
+    const calculatePosition = () => {
+        if (!tooltipRef.current || !targetRef.current) return
+
+        const targetRect = targetRef.current.getBoundingClientRect()
+        const tooltipRect = tooltipRef.current.getBoundingClientRect()
+
+        let newPlacement = finalPlacement
+
+        const spaceTop = targetRect.top
+        const spaceBottom = window.innerHeight - targetRect.bottom
+        const spaceLeft = targetRect.left
+        const spaceRight = window.innerWidth - targetRect.right
+
+        if (spaceTop >= tooltipRect.height && spaceBottom >= tooltipRect.height) {
+            newPlacement = 'bottom'
+        }
+
+        if (newPlacement === 'top' && spaceTop < tooltipRect.height) {
+            newPlacement = 'bottom'
+        } else if (newPlacement === 'bottom' && spaceBottom < tooltipRect.height) {
+            newPlacement = 'top'
+        } else if (newPlacement === 'left' && spaceLeft < tooltipRect.width) {
+            newPlacement = 'right'
+        } else if (newPlacement === 'right' && spaceRight < tooltipRect.width) {
+            newPlacement = 'left'
+        }
+
+        setFinalPlacement(newPlacement)
+    }
+
+    useEffect(() => {
+        if (visible) {
+            calculatePosition()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [visible, finalPlacement])
+
+    const { contentStyles, arrowStyles } = getPlaceTooltip(finalPlacement)
+
     return (
         <Wrapper
+            ref={targetRef}
             onMouseEnter={showTooltip}
             onMouseLeave={hideTooltip}
         >
             {children}
             {visible && (
-                <Content $placement={placement} $animation={animation}>
+                <Content ref={tooltipRef} $animation={animation} $contentStyles={contentStyles}>
                     {content}
-                    {arrow && <Arrow $placement={placement} />}
+                    {arrow && <Arrow $arrowStyles={arrowStyles} />}
                 </Content>
             )}
         </Wrapper>
@@ -40,40 +86,22 @@ const Tooltip = ({
 
 export default Tooltip
 
-const fadeIn = keyframes`
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-`
-
-const scaleIn = keyframes`
-    from {
-        transform: scale(.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-`
-
 const Wrapper = styled.div`
     position: relative;
     display: inline-block;
     cursor: pointer;
 `
+
 const Content = styled.div`
     position: absolute;
-    background: #333;
+    background: rgba(0, 0, 0, .3);
     color: #fff;
     padding: 0.5rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
     white-space: nowrap;
     z-index: 10;
+    
     ${({ $animation }) =>
         $animation === "fade"
             ? css`
@@ -81,44 +109,11 @@ const Content = styled.div`
               `
             : $animation === "scale"
                 ? css`
-                  animation: ${scaleIn} 0.2s ease-out;
+                  animation: ${scaleUp} 0.2s ease-out;
               `
                 : ""}
 
-    ${({ $placement }) => {
-        switch ($placement) {
-            case "top":
-                return `
-                    bottom: 100%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    margin-bottom: 0.5rem;
-                `;
-            case "bottom":
-                return `
-                    top: 100%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    margin-top: 0.5rem;
-                `;
-            case "left":
-                return `
-                    right: 100%;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    margin-right: 0.5rem;
-                `;
-            case "right":
-                return `
-                    left: 100%;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    margin-left: 0.5rem;
-                `;
-            default:
-                return "";
-        }
-    }}
+    ${({ $contentStyles }) => $contentStyles}  
 `
 
 const Arrow = styled.div`
@@ -127,42 +122,5 @@ const Arrow = styled.div`
     height: 0;
     border-style: solid;
 
-    ${({ $placement }) => {
-        switch ($placement) {
-            case "top":
-                return `
-                    border-width: 0.5rem 0.5rem 0 0.5rem;
-                    border-color: #333 transparent transparent transparent;
-                    bottom: -0.5rem;
-                    left: 50%;
-                    transform: translateX(-50%);
-                `;
-            case "bottom":
-                return `
-                    border-width: 0 0.5rem 0.5rem 0.5rem;
-                    border-color: transparent transparent #333 transparent;
-                    top: -0.5rem;
-                    left: 50%;
-                    transform: translateX(-50%);
-                `;
-            case "right":
-                return `
-                    border-width: 0.5rem 0.5rem 0.5rem 0;
-                    border-color: transparent #333 transparent transparent;
-                    left: -0.5rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                `;
-            case "left":
-                return `
-                    border-width: 0.5rem 0 0.5rem 0.5rem;
-                    border-color: transparent transparent transparent #333;
-                    right: -0.5rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                `;
-            default:
-                return "";
-        }
-    }}
+    ${({ $arrowStyles }) => $arrowStyles}  
 `

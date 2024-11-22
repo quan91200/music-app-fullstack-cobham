@@ -1,61 +1,44 @@
 import React from 'react'
-import styled from 'styled-components'
+import PropTypes from 'prop-types'
 
-const Inputs = ({ type, title, required, icon }) => {
+const Inputs = ({
+    type,
+    title = '',
+    required,
+    icon = null,
+    placeholder = 'Fill value ...'
+}) => {
     return (
-        <Container>
-            {title && <Title>{title}
-                {required && <Required>*</Required>}
-            </Title>}
-            <InputWrapper>
-                {icon && <Icon>{icon}</Icon>}
-                <Input
+        <label className="flex flex-col my-2">
+            {title && (
+                <div className="flex items-start justify-start text-lg">
+                    {title}
+                    {required && <span className="text-red-500">*</span>}
+                </div>
+            )}
+            <div className="relative flex items-center justify-start">
+                {icon && (
+                    <div className="absolute left-2 text-xl text-gray-400">
+                        {icon}
+                    </div>
+                )}
+                <input
                     type={type}
-                    $hasIcon={!!icon}
+                    placeholder={placeholder}
+                    className={`p-2 pl-${icon ? '8' : '4'} text-base border border-gray-300 
+                        rounded-md w-full focus:outline-none focus:ring-2 focus:ring-dodgerblue`}
                 />
-            </InputWrapper>
-        </Container>
+            </div>
+        </label>
     )
 }
 
+Inputs.propTypes = {
+    type: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    required: PropTypes.bool,
+    icon: PropTypes.element,
+    placeholder: PropTypes.string,
+}
+
 export default Inputs
-
-const Container = styled.label`
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-`
-
-const Title = styled.div`
-    font-size: 1rem;
-`
-
-const Required = styled.span`
-    color: tomato;
-`
-
-const InputWrapper = styled.div`
-    position: relative;
-    display: flex;
-    align-items: center;
-`
-
-const Icon = styled.div`
-    position: absolute;
-    left: 0.5rem;
-    font-size: 1.2rem;
-    color: #ccc;
-`
-
-const Input = styled.input`
-    padding: ${(props) => (props.$hasIcon ? '0.25rem 0.25rem 0.25rem 2rem' : '0.25rem')};
-    font-size: 1rem;
-    border: 1px solid #eee;
-    border-radius: 0.25rem;
-    width: 100%;
-
-    &:focus {
-        outline-color: dodgerblue;
-        outline-width: 1px;
-    }
-`

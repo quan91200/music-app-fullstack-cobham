@@ -1,19 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react'
-import styled, { css } from 'styled-components'
-import { fadeIn, scaleUp } from '../utilities/Animation'
-import { getPlaceTooltip } from '../utilities/Styles'
+import React, { useState, useRef } from 'react'
+import PropTypes from 'prop-types'
 
 const Tooltip = ({
     children,
     content,
-    placement = 'top',
+    placement = 'bottom',
     delay = 200,
     arrow = true,
+    bgColor = 'black',
     animation = "fade"
 }) => {
     const [visible, setVisible] = useState(false)
-    const [finalPlacement, setFinalPlacement] = useState(placement)
-
     const tooltipRef = useRef(null)
     const targetRef = useRef(null)
 
@@ -28,99 +25,78 @@ const Tooltip = ({
         setVisible(false)
     }
 
-    const calculatePosition = () => {
-        if (!tooltipRef.current || !targetRef.current) return
+    const getPositionClasses = () => {
+        switch (placement) {
+            case 'top':
+                return {
+                    contentClasses: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
+                    arrowClasses: 'border-t-4 border-l-4 border-r-4 border-b-4 border-solid border-transparent bottom-[-4px] left-1/2 transform -translate-x-1/2 -rotate-45 absolute'
+                }
+            case 'bottom':
+                return {
+                    contentClasses: 'top-full left-1/2 transform -translate-x-1/2 mt-2',
+                    arrowClasses: 'border-b-4 border-l-4 border-r-4 border-t-4 border-solid border-transparent top-[-4px] left-1/2 transform -translate-x-1/2 -rotate-45 absolute'
+                }
+            case 'left':
+                return {
+                    contentClasses: 'right-full top-1/2 transform -translate-y-1/2 mr-2',
+                    arrowClasses: 'border-l-4 border-t-4 border-b-4 border-r-4 border-solid border-transparent right-[-4px] top-1/2 transform -translate-y-1/2 -rotate-45 absolute'
+                }
+            case 'right':
+                return {
+                    contentClasses: 'left-full top-1/2 transform -translate-y-1/2 ml-2',
+                    arrowClasses: 'border-r-4 border-t-4 border-b-4 border-l-4 border-solid border-transparent left-[-4px] top-1/2 transform -translate-y-1/2 -rotate-45 absolute'
+                }
+            default:
+                return {
+                    contentClasses: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
+                    arrowClasses: 'border-t-4 border-l-4 border-r-4 border-b-4 border-solid border-transparent bottom-[-4px] left-1/2 transform -translate-x-1/2 -rotate-45 absolute'
+                }
 
-        const targetRect = targetRef.current.getBoundingClientRect()
-        const tooltipRect = tooltipRef.current.getBoundingClientRect()
-
-        let newPlacement = finalPlacement
-
-        const spaceTop = targetRect.top
-        const spaceBottom = window.innerHeight - targetRect.bottom
-        const spaceLeft = targetRect.left
-        const spaceRight = window.innerWidth - targetRect.right
-
-        if (spaceTop >= tooltipRect.height && spaceBottom >= tooltipRect.height) {
-            newPlacement = 'bottom'
         }
-
-        if (newPlacement === 'top' && spaceTop < tooltipRect.height) {
-            newPlacement = 'bottom'
-        } else if (newPlacement === 'bottom' && spaceBottom < tooltipRect.height) {
-            newPlacement = 'top'
-        } else if (newPlacement === 'left' && spaceLeft < tooltipRect.width) {
-            newPlacement = 'right'
-        } else if (newPlacement === 'right' && spaceRight < tooltipRect.width) {
-            newPlacement = 'left'
-        }
-
-        setFinalPlacement(newPlacement)
     }
 
-    useEffect(() => {
-        if (visible) {
-            calculatePosition()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [visible, finalPlacement])
-
-    const { contentStyles, arrowStyles } = getPlaceTooltip(finalPlacement)
+    const { contentClasses, arrowClasses } = getPositionClasses()
 
     return (
-        <Wrapper
+        <div
             ref={targetRef}
             onMouseEnter={showTooltip}
             onMouseLeave={hideTooltip}
+            className="relative inline-block cursor-pointer"
         >
             {children}
             {visible && (
-                <Content ref={tooltipRef} $animation={animation} $contentStyles={contentStyles}>
+                <div
+                    ref={tooltipRef}
+                    className={`absolute text-white p-2 rounded text-sm whitespace-nowrap z-10 ${contentClasses}`}
+                    style={{
+                        animation: animation === "fade" ? "fadeIn 0.2s ease-out" : "scaleUp 0.2s ease-out",
+                        backgroundColor: bgColor
+                    }}
+                >
                     {content}
-                    {arrow && <Arrow $arrowStyles={arrowStyles} />}
-                </Content>
+                    {arrow &&
+                        <div
+                            className={arrowClasses}
+                            style={{
+                                backgroundColor: bgColor
+                            }}
+                        />}
+                </div>
             )}
-        </Wrapper>
+        </div>
     )
 }
 
+Tooltip.propTypes = {
+    children: PropTypes.node.isRequired,
+    content: PropTypes.string.isRequired,
+    placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
+    delay: PropTypes.number,
+    arrow: PropTypes.bool,
+    animation: PropTypes.oneOf(['fade', 'scale']),
+    bgColor: PropTypes.string
+}
+
 export default Tooltip
-
-const Wrapper = styled.div`
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-`
-
-const Content = styled.div`
-    position: absolute;
-    background: rgba(0, 0, 0, .3);
-    color: #fff;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    white-space: nowrap;
-    z-index: 10;
-    
-    ${({ $animation }) =>
-        $animation === "fade"
-            ? css`
-                  animation: ${fadeIn} 0.2s ease-out;
-              `
-            : $animation === "scale"
-                ? css`
-                  animation: ${scaleUp} 0.2s ease-out;
-              `
-                : ""}
-
-    ${({ $contentStyles }) => $contentStyles}  
-`
-
-const Arrow = styled.div`
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-style: solid;
-
-    ${({ $arrowStyles }) => $arrowStyles}  
-`

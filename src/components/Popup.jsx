@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
 const Popup = ({
@@ -34,3 +35,11 @@ const Popup = ({
 }
 
 export default Popup
+
+Popup.propTypes = {
+    open: PropTypes.bool,
+    onClose: PropTypes.func,
+    children: PropTypes.node,
+    hideWrap: PropTypes.bool,
+    position: PropTypes.oneOf(['center', 'top', 'bottom', 'left', 'right'])
+}

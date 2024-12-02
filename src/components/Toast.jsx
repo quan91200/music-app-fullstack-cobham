@@ -1,3 +1,4 @@
+import PropTypes from "prop-types"
 import React, { useEffect } from "react"
 import { TiTick } from "react-icons/ti"
 
@@ -32,14 +33,18 @@ const Toast = ({
 
     const typeClasses = {
         success: "bg-green-500",
-        error: "bg-red-500",
+        primary: "bg-red-500",
         info: "bg-blue-500",
         warning: "bg-yellow-500",
+        outlineSuccess: "border-green-500 bg-transparent",
+        outlinePrimary: "border-red-500 bg-transparent",
+        outlineInfo: "border-blue-500 bg-transparent",
+        outlineWarning: "border-yellow-500 bg-transparent"
     }
 
     return (
         <div
-            className={`fixed ${positionClasses[pos]} p-4 rounded-lg shadow-lg flex items-center gap-2 
+            className={`fixed ${positionClasses[pos]} p-4 rounded-lg shadow-lg flex items-center gap-2
                         text-white cursor-pointer animate-opacity transition-opacity duration-500 ${typeClasses[type]}`
             }
             onClick={onClose}
@@ -52,3 +57,28 @@ const Toast = ({
 }
 
 export default Toast
+
+Toast.propTypes = {
+    open: PropTypes.bool,
+    onClose: PropTypes.func,
+    message: PropTypes.string,
+    type: PropTypes.oneOf([
+        'success',
+        'primary',
+        'info',
+        'warning',
+        'outlineSuccess',
+        'outlinePrimary',
+        'outlineInfo',
+        'outlineWarning'
+    ]),
+    pos: PropTypes.oneOf([
+        'top-left',
+        'top-right',
+        'bottom-left',
+        'bottom-right',
+        'top-center',
+        'bottom-center'
+    ]),
+    duration: PropTypes.number
+}

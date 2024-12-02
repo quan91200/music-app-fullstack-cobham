@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Inputs = ({
+const Input = ({
     type,
     title = '',
     required,
@@ -9,7 +9,7 @@ const Inputs = ({
     placeholder = 'Fill value ...'
 }) => {
     return (
-        <label className="flex flex-col my-2">
+        <label className="flex flex-col my-1">
             {title && (
                 <div className="flex items-start justify-start text-lg">
                     {title}
@@ -25,7 +25,7 @@ const Inputs = ({
                 <input
                     type={type}
                     placeholder={placeholder}
-                    className={`p-2 pl-${icon ? '8' : '4'} text-base border border-gray-300 
+                    className={`${icon ? 'pl-8 p-2' : 'pl-4'} text-base border border-gray-300 
                         rounded-md w-full focus:outline-none focus:ring-2 focus:ring-dodgerblue`}
                 />
             </div>
@@ -33,7 +33,7 @@ const Inputs = ({
     )
 }
 
-Inputs.propTypes = {
+Input.propTypes = {
     type: PropTypes.string.isRequired,
     title: PropTypes.string,
     required: PropTypes.bool,
@@ -41,4 +41,4 @@ Inputs.propTypes = {
     placeholder: PropTypes.string,
 }
 
-export default Inputs
+export default Input

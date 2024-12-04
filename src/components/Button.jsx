@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 
 const Button = ({
     children,
-    variant = "primary",
+    variant = "default",
     size = "medium",
     onClick,
     disabled = false,
@@ -17,6 +17,7 @@ const Button = ({
         secondary: "bg-gray-500 text-white hover:bg-gray-600",
         outline: "bg-transparent border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white",
         danger: "bg-red-500 text-white hover:bg-red-600",
+        default: "bg-transparent text-white"
     }
 
     const sizeClasses = {
@@ -44,7 +45,7 @@ const Button = ({
 
 Button.propTypes = {
     children: PropTypes.node.isRequired,
-    variant: PropTypes.oneOf(["primary", "secondary", "outline", "danger"]),
+    variant: PropTypes.oneOf(["primary", "secondary", "outline", "danger", "default"]),
     size: PropTypes.oneOf(["small", "medium", "large"]),
     onClick: PropTypes.func,
     disabled: PropTypes.bool,

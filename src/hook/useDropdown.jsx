@@ -1,21 +1,9 @@
 import { useState } from 'react'
 
-/**
- * Hook to manage dropdown state.
- * @param {Array} initialOptions
- * @returns {{
- *   selected: object,
- *   selectOption: function,
- *   options: Array,
- *   isOpen: boolean,
- *   toggleDropdown: function
- * }}
- */
-
-const useDropdown = (initialOptions = []) => {
+const useDropdown = (initialOptions = [], defaultSelected = null) => {
 
     const [options] = useState(initialOptions)
-    const [selected, setSelected] = useState(null)
+    const [selected, setSelected] = useState(defaultSelected)
     const [isOpen, setIsOpen] = useState(false)
 
     const toggleDropdown = (value) => {

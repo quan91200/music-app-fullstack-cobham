@@ -1,0 +1,18 @@
+export const initialState = {
+    user: null,
+    searchTerm: "",
+    filterTerm: "all",
+    artists: null,
+    artistFilter: null,
+    languageFilter: null,
+    allUser: null,
+    userFilter: null,
+    allSongs: null,
+    songFilter: null,
+    allAlbums: null,
+    albumFilter: null,
+    song: 0,
+    isSongPlaying: false,
+    miniPlayer: false,
+    background: "linear-gradient(to right, #000, #fff)",
+}

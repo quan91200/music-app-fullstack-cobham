@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Button, DropdownBgColor } from '../components/index'
 
 const Dashboard = () => {
+    // eslint-disable-next-line no-unused-vars
+    const [background, setBackground] = useState("")
+
+    const handleUpdateBackground = (gradient) => {
+        setBackground(gradient)
+    }
     return (
-        <div className='w-full bg-slate-100 h-full'>
-            Dashboard
-        </div>
+        <Button>
+            <DropdownBgColor onUpdateBackground={handleUpdateBackground} />
+        </Button>
     )
 }
 

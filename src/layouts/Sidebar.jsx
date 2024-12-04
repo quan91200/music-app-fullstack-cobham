@@ -4,7 +4,7 @@ import Box from '../components/Box';
 
 const Sidebar = ({ children }) => {
     return (
-        <Box className="p-3 bg-slate-100 rounded-md h-full">
+        <Box className="p-3 bg-[rgba(255,255,255,.3)] rounded-md h-full">
             <div className="
                 font-['Zen_Dots'] font-extrabold not-italic text-lg
                 text-red-500 flex justify-center items-start h-full"

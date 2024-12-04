@@ -11,7 +11,8 @@ const DefaultLayout = ({ children }) => {
                 <div className='w-1/6'>
                     <Sidebar />
                 </div>
-                <div className='flex-1 flex flex-col overflow-hidden'>
+                <div className='flex-1 flex flex-col overflow-hidden bg-[rgba(255,255,255,.3)] 
+            rounded-md'>
                     <div>
                         <Header />
                     </div>

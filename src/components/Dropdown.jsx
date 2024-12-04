@@ -2,6 +2,7 @@ import React from 'react'
 import useDropdown from '../hook/useDropdown'
 import { IoIosArrowDown } from "react-icons/io"
 import PropTypes from 'prop-types'
+import { Button } from './index'
 
 const Dropdown = ({
     options,
@@ -18,14 +19,14 @@ const Dropdown = ({
 
     return (
         <div className="relative">
-            <button
+            <Button
                 className={`flex items-center justify-between border ${shape === 'circle' ? 'rounded-full h-12 w-12' : 'rounded-lg h-auto px-4 py-2'
-                    } border-gray-300 bg-white text-gray-700 cursor-pointer hover:border-gray-400 transition-all`}
+                    } border-gray-300 text-gray-700 cursor-pointer hover:border-gray-400 transition-all`}
                 onClick={() => toggleDropdown()}
             >
                 {selected ? selected.label : placeholder}
                 <IoIosArrowDown className="ml-2" />
-            </button>
+            </Button>
             {isOpen && (
                 <ul className="mt-1 border border-gray-300 bg-white rounded-lg shadow-lg max-h-60 overflow-y-auto z-50 fixed">
                     {options.map((option, index) => (

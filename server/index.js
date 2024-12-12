@@ -25,7 +25,7 @@ app.use('/api/playlist', playlist)
 app.use('/api/friend', friend)
 app.use('/api/payment', payment)
 
-const PORT = process.env.PORT || 8800
+const PORT = process.env.PORT || 8000
 
 app.get('/', (req, res) => {
     res.send('Welcome to the server!')
